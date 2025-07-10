@@ -1,0 +1,242 @@
+/* :root {
+    --bg-light: #f5f5f5;
+    --bg-dark: #1e1e1e;
+    --text-light: #000;
+    --text-dark: #fff;
+}
+
+body {
+    font-family: sans-serif;
+    text-align: center;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    padding: 2rem;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+.button-box {
+    margin: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background-color: #007BFF;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+img {
+    max-width: 80%;
+    border: 2px solid #333;
+    margin-top: 20px;
+}
+
+.toggle-switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    z-index: 100;
+}
+
+.dark-mode .toggle-switch {
+    color: #fff;
+}
+
+.fps-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    z-index: 100;
+    display: none;
+}
+
+/* 📱 Responsive for Mobile */
+
+/*
+@media screen and (max-width: 768px) {
+    .button-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    button, input[type="file"] {
+        width: 90%;
+        max-width: 300px;
+        font-size: 16px;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .toggle-switch {
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+    .fps-box {
+        font-size: 12px;
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 10px;
+    }
+} 
+*/
+
+
+/* Reset default */
+/* Reset & Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Background with beige gradient and soft transparency */
+body {
+    background: linear-gradient(135deg, rgba(245, 245, 220, 0.85), rgba(255, 248, 220, 0.85));
+    color: #333;
+    min-height: 100vh;
+    padding: 20px;
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Glassmorphism containers */
+#image-result, #webcam-result, .fps-box {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #222;
+}
+
+/* Headline */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+}
+
+/* Button section */
+.button-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.button-box button,
+.button-box input[type="file"] {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #333;
+    cursor: pointer;
+    font-size: 1rem;
+    backdrop-filter: blur(8px);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button-box button:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+input[type="file"] {
+    background-color: transparent;
+    cursor: pointer;
+}
+
+/* Toggle dark mode button */
+.toggle-switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: background 0.3s ease;
+}
+
+.toggle-switch:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* FPS display styling */
+.fps-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    font-weight: bold;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #eee;
+}
+
+body.dark-mode .toggle-switch {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+body.dark-mode .button-box button,
+body.dark-mode .button-box input[type="file"],
+body.dark-mode .toggle-switch {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #eee;
+}
+
+body.dark-mode .button-box button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+body.dark-mode #image-result,
+body.dark-mode #webcam-result,
+body.dark-mode .fps-box {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YOLOv8 Web App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Sound -->
+    <audio id="ding-sound" src="{{ url_for('static', filename='ding.mp3') }}"></audio>
+</head>
+<body>
+
+    <!-- 🌙 Dark Mode Toggle -->
+    <div class="toggle-switch" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <i class="fa-solid fa-moon"></i>
+    </div>
+
+    <h1><i class="fa-solid fa-robot"></i> YOLOv8 Object Detection</h1>
+
+    <!-- 🧩 Buttons -->
+    <div class="button-box">
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="uploadImage()"><i class="fa-solid fa-upload"></i> Upload & Detect</button>
+        <button onclick="startWebcam()" id="startButton"><i class="fa-solid fa-video"></i> Start Webcam</button>
+        <button onclick="stopWebcam()" id="stopButton" style="display:none;"><i class="fa-solid fa-stop"></i> Stop Webcam</button>
+        <button onclick="captureScreenshot()" id="captureButton" style="display:none;"><i class="fa-solid fa-camera"></i> Capture</button>
+        <a id="downloadBtn" style="display:none;" download="detection.jpg">
+            <button><i class="fa-solid fa-download"></i> Download Image</button>
+        </a>
+    </div>
+
+    <!-- 📷 Detected Image -->
+    <div id="image-result">
+        <h3>Detected Image:</h3>
+        <img id="output-img" src="" alt="Detected Output" />
+    </div>
+
+    <!-- 🎥 Webcam -->
+    <div id="webcam-result" style="display:none;">
+        <h3>Live Webcam Feed:</h3>
+        <img id="webcam-feed" alt="Webcam Feed">
+    </div>
+
+    <!-- 📈 FPS Display -->
+    <div class="fps-box" id="fpsDisplay">
+        FPS: <span id="fps">0</span>
+    </div>
+
+    <!-- 🚀 JavaScript -->
+    <script>
+        let webcamActive = false;
+        let lastFrameTime = 0;
+
+        function uploadImage() {
+            stopWebcam();
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            if (!file) return alert("Please select an image.");
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.blob())
+            .then(blob => {
+                const imgURL = URL.createObjectURL(blob);
+                document.getElementById("output-img").src = imgURL;
+                document.getElementById("downloadBtn").href = imgURL;
+                document.getElementById("downloadBtn").style.display = "inline-block";
+                document.getElementById("image-result").style.display = "block";
+                document.getElementById("webcam-result").style.display = "none";
+                document.getElementById("ding-sound").play();
+            });
+        }
+
+        function startWebcam() {
+            if (webcamActive) return;
+
+            document.getElementById("image-result").style.display = "none";
+            document.getElementById("webcam-result").style.display = "block";
+            document.getElementById("startButton").style.display = "none";
+            document.getElementById("stopButton").style.display = "inline-block";
+            document.getElementById("captureButton").style.display = "inline-block";
+            document.getElementById("fpsDisplay").style.display = "block";
+
+            webcamActive = true;
+            updateWebcamFeed();
+        }
+
+        function updateWebcamFeed() {
+            if (!webcamActive) return;
+
+            const img = document.getElementById("webcam-feed");
+            const timestamp = new Date().getTime();
+            img.src = "/video?" + timestamp;
+
+            img.onload = () => {
+                const now = performance.now();
+                const delta = now - lastFrameTime;
+                const fps = Math.round(1000 / delta);
+                document.getElementById("fps").textContent = isFinite(fps) ? fps : '0';
+                lastFrameTime = now;
+                updateWebcamFeed();
+            };
+
+            img.onerror = () => {
+                setTimeout(updateWebcamFeed, 100);
+            };
+        }
+
+        function stopWebcam() {
+            if (!webcamActive) return;
+
+            document.getElementById("webcam-feed").src = "";
+            document.getElementById("webcam-result").style.display = "none";
+            document.getElementById("startButton").style.display = "inline-block";
+            document.getElementById("stopButton").style.display = "none";
+            document.getElementById("captureButton").style.display = "none";
+            document.getElementById("fpsDisplay").style.display = "none";
+            webcamActive = false;
+        }
+
+        function captureScreenshot() {
+            const webcamImg = document.getElementById("webcam-feed");
+
+            const canvas = document.createElement("canvas");
+            canvas.width = webcamImg.naturalWidth;
+            canvas.height = webcamImg.naturalHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(webcamImg, 0, 0);
+
+            const imageUrl = canvas.toDataURL("image/png");
+
+            const link = document.createElement("a");
+            link.href = imageUrl;
+            link.download = "webcam_capture.png";
+            link.click();
+
+            document.getElementById("ding-sound").play();
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
+</body>
+</html>
